@@ -18,7 +18,25 @@ import News from "../../schemas/ALNews";
 	subcommands: [
 		{ name: "eval", chatInputRun: "subcommandEval", },
 		{ name: "vote-check", chatInputRun: "subcommandVote", },
-		{ name: "tweet", chatInputRun: "subcommandTweet", }
+		{ name: "tweet", chatInputRun: "subcommandTweet", },
+		{
+			name: "blacklist",
+			type: "group",
+			entries: [
+				{
+					name: "add",
+					chatInputRun: "subcommandBLAdd",
+				},
+				{
+					name: "remove",
+					chatInputRun: "subcommandBLRemove",
+				},
+				{
+					name: "check",
+					chatInputRun: "subcommandBLCheck",
+				}
+			],
+		}
 	],
 })
 export class DeveloperCommand extends Subcommand
@@ -60,6 +78,44 @@ export class DeveloperCommand extends Subcommand
 								.setName("url")
 								.setDescription("N/A")
 								.setRequired(true)
+						)
+				)
+				.addSubcommandGroup(command =>
+					command
+						.setName("blacklist")
+						.setDescription("N/A")
+						.addSubcommand(command =>
+							command
+								.setName("add")
+								.setDescription("Add someone to the bot's blacklist.")
+								.addUserOption(option =>
+									option
+										.setName("user")
+										.setDescription("N/A")
+										.setRequired(true)
+								)
+						)
+						.addSubcommand(command =>
+							command
+								.setName("remove")
+								.setDescription("Remove someone from the bot's blacklist.")
+								.addUserOption(option =>
+									option
+										.setName("user")
+										.setDescription("N/A")
+										.setRequired(true)
+								)
+						)
+						.addSubcommand(command =>
+							command
+								.setName("check")
+								.setDescription("Check if an user is blacklisted or not.")
+								.addUserOption(option =>
+									option
+										.setName("user")
+										.setDescription("N/A")
+										.setRequired(true)
+								)
 						)
 				)
 		);
@@ -250,5 +306,128 @@ export class DeveloperCommand extends Subcommand
 			.setColor("Green")
 			.setDescription("✅ | Sent out tweets to all server!");
 		await interaction.editReply({ embeds: [confirmed], });
+	}
+
+	/**
+	 * /developer blacklist add
+	 * @param interaction
+	 */
+	public async subcommandBLAdd(interaction: Subcommand.ChatInputCommandInteraction)
+	{
+		if (!interaction.deferred) await interaction.deferReply();
+
+		const user = await User.findOne({
+			userId: interaction.options.getUser("user").id,
+		});
+
+		if (!user)
+		{
+			await User.create({
+				userId: interaction.options.getUser("user").id,
+				commandsExecuted: 0,
+				blacklisted: true,
+			});
+		}
+		else if (user.blacklisted)
+		{
+			const noOne = new EmbedBuilder()
+				.setColor("Red")
+				.setDescription(
+					`${interaction.options.getUser("user")} has already been blacklisted!`
+				);
+			return interaction.editReply({ embeds: [noOne], });
+		}
+		else
+		{
+			await user.updateOne({ blacklisted: true, });
+		}
+
+		const success = new EmbedBuilder()
+			.setColor("Green")
+			.setDescription(
+				`${interaction.options.getUser("user")} has been added to blacklist!`
+			)
+			.addFields({
+				name: "User ID",
+				value: interaction.options.getUser("user").id,
+			})
+			.setTimestamp();
+
+		await interaction.editReply({ embeds: [success], });
+	}
+
+	/**
+	 * /developer blacklist remove
+	 * @param interaction
+	 */
+	public async subcommandBLRemove(interaction: Subcommand.ChatInputCommandInteraction)
+	{
+		if (!interaction.deferred) await interaction.deferReply();
+
+		const user = await User.findOne({
+			userId: interaction.options.getUser("user").id,
+		});
+
+		if (!user)
+		{
+			const noOne = new EmbedBuilder()
+				.setColor("Red")
+				.setDescription("User is not blacklisted!");
+			return interaction.editReply({ embeds: [noOne], });
+		}
+		else if (user.blacklisted)
+		{
+			await user.updateOne({ blacklisted: false, });
+		}
+		else
+		{
+			const noOne = new EmbedBuilder()
+				.setColor("Red")
+				.setDescription("User is not blacklisted!");
+			return interaction.editReply({ embeds: [noOne], });
+		}
+
+		const success = new EmbedBuilder()
+			.setColor("Green")
+			.setDescription(
+				`${interaction.options.getUser(
+					"user"
+				)} has been removed from the blacklist!`
+			)
+			.setTimestamp();
+
+		await interaction.editReply({ embeds: [success], });
+	}
+
+	/**
+	 * /developer blacklist check
+	 * @param interaction
+	 */
+	public async subcommandBLCheck(interaction: Subcommand.ChatInputCommandInteraction)
+	{
+		if (!interaction.deferred) await interaction.deferReply();
+
+		const user = await User.findOne({
+			userId: interaction.options.getUser("user").id,
+		});
+
+		if (user.blacklisted)
+		{
+			const blacklisted = new EmbedBuilder()
+				.setColor("Red")
+				.setTitle("Uh oh, user is blacklisted!")
+				.addFields({
+					name: "User:",
+					value: `${interaction.options.getUser("user")}`,
+				});
+			await interaction.editReply({ embeds: [blacklisted], });
+		}
+		else
+		{
+			const noOne = new EmbedBuilder()
+				.setColor("Red")
+				.setDescription("User is not blacklisted!");
+			await interaction.editReply({ embeds: [noOne], });
+		}
 	}
 }
