@@ -1,7 +1,9 @@
 import Fuse from "fuse.js";
-import { AL } from "../commands/games/azur-lane";
 import { EmbedBuilder } from "discord.js";
 import { toTitleCase } from "./Utils";
+import { AzurAPI } from "@azurapi/azurapi";
+
+const AL = new AzurAPI();
 
 const allGears = [];
 AL.equipments.forEach(gear => allGears.push(gear));
