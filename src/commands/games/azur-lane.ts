@@ -377,7 +377,6 @@ export class AzurLaneCommand extends Subcommand
 		await page.waitForSelector(
 			".modal-body > div:nth-child(5) > div:nth-child(2) > p:nth-child(1)"
 		);
-		await page.screenshot({ path: "image.png", fullPage: true, });
 
 		const containerDivs = await page.$$(".equipment-grid");
 
