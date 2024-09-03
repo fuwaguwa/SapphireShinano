@@ -50,7 +50,8 @@ export async function searchBooru({ interaction, query, site, mode, }: BooruSear
 		"-animal_genitalia",
 		"-anthro",
 		"-goblin",
-		"-orc"
+		"-orc",
+		"-ai-generated"
 	];
 
 	const booruResult = await booru.search(site, query.concat(blacklist), {
