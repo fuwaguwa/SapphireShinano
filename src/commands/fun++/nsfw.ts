@@ -68,6 +68,7 @@ export class NSFWCommand extends Subcommand
 			builder
 				.setName(this.name)
 				.setDescription(this.description)
+				.setNSFW(true)
 				.addSubcommandGroup(command =>
 					command
 						.setName("autohentai")

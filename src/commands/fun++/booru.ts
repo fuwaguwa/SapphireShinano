@@ -9,8 +9,7 @@ import { BooruSite } from "../../typings/Booru";
 	description: "Search for content on booru image boards!",
 	cooldownLimit: 1,
 	cooldownDelay: 8000,
-	cooldownFilteredUsers: [...envParseArray("ownerIds")],
-	preconditions: ["Voted"],
+	cooldownFilteredUsers: envParseArray("ownerIds"),
 	nsfw: true,
 	runIn: CommandOptionsRunTypeEnum.GuildAny,
 	subcommands: [
