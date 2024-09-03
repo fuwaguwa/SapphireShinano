@@ -33,19 +33,17 @@ export class AzurLaneNews
 		if (!process.env.guildId)
 		{
 			container.logger.info("Started fetching tweets...");
-			await this.fetchAllTweets();
-			setInterval(this.fetchAllTweets, 300000);
-		}
-	}
 
-	/**
-	 * Fetch all types of tweets
-	 * @private
-	 */
-	private async fetchAllTweets()
-	{
-		await this.fetchTweets();
-		await this.fetchWeiboPosts();
+			await this.fetchTweets();
+			await this.fetchWeiboPosts();
+
+
+			setInterval(async () =>
+			{
+				await this.fetchTweets();
+				await this.fetchWeiboPosts();
+			}, 300000);
+		}
 	}
 
 	/**
@@ -141,7 +139,7 @@ export class AzurLaneNews
 	 * Fetch Tweets from EN and JP twitter account
 	 * @private
 	 */
-	private async fetchTweets()
+	public async fetchTweets()
 	{
 		const enFeed = await getRSSFeed("AzurLane_EN");
 		const jpFeed = await getRSSFeed("azurlane_staff");
@@ -212,7 +210,7 @@ export class AzurLaneNews
 	 * Fetch posts from CN account
 	 * @private
 	 */
-	private async fetchWeiboPosts()
+	public async fetchWeiboPosts()
 	{
 		fetch("https://al-tweet-scraper.onrender.com/alweibotweet")
 			.then(res => res.json())
