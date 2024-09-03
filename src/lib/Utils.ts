@@ -86,7 +86,7 @@ export function logSuccessfulCommand(payload: ContextMenuCommandSuccessPayload |
  */
 export async function updateServerCount()
 {
-	if (container.client.user.id === "1002189046619045908") return "Not Main Bot";
+	if (container.client.user.id !== "1002193298229829682") return "Not Main Bot";
 	// On Discord Services
 	await fetch("https://api.discordservices.net/bot/1002193298229829682/stats", {
 		method: "POST",
