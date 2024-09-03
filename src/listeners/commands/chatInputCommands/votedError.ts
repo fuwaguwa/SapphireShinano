@@ -9,7 +9,6 @@ export class VotedError extends Listener<typeof Events.ChatInputCommandDenied>
 {
 	public override async run({ context, identifier, message: content, }: UserError, { interaction, }: ChatInputCommandDeniedPayload )
 	{
-		console.log("got here 1");
 		if (Reflect.get(Object(context), "silent")) return;
 		if (identifier !== "votedError") return;
 
