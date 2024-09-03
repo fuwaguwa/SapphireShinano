@@ -94,7 +94,7 @@ export async function updateServerCount()
 			Authorization: process.env.discordServicesApiKey,
 		},
 		body: JSON.stringify({
-			servers: this.cclient.guilds.cache.size,
+			servers: container.client.guilds.cache.size,
 		}),
 	});
 
