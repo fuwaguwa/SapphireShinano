@@ -17,15 +17,12 @@ export class ShinanoAutoLewd
 {
 	public async startLewdPosting()
 	{
-		setInterval(async () =>
+		if (!process.env.guildId)
 		{
-			if (!process.env.guildId)
-			{
-				await this.postLewd();
-			}
-		}, 300000);
-
-		container.logger.info("Started lewd posting...");
+			container.logger.info("Started lewd posting...");
+			await this.postLewd();
+			setInterval(this.postLewd, 300000);
+		}
 	}
 
 	/**
