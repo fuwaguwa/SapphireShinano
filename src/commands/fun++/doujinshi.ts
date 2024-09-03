@@ -13,7 +13,6 @@ import { ShinanoPaginator } from "../../structures/Paginator";
 	nsfw: true,
 	cooldownLimit: 1,
 	cooldownDelay: 5000,
-	preconditions: ["Voted"],
 	cooldownFilteredUsers: envParseArray("ownerIds"),
 	runIn: CommandOptionsRunTypeEnum.GuildAny,
 	subcommands: [
@@ -35,6 +34,7 @@ export class DoujinCommand extends Subcommand
 			builder
 				.setName(this.name)
 				.setDescription(this.description)
+				.setNSFW(true)
 				.addSubcommand(command =>
 					command
 						.setName("code")

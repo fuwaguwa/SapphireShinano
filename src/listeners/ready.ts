@@ -1,7 +1,7 @@
 import { ApplyOptions } from "@sapphire/decorators";
 import { Listener, ListenerOptions } from "@sapphire/framework";
 import { ActivityType } from "discord.js";
-import { updateServerCount } from "../lib/Utils";
+import { startCatchers, updateServerCount } from "../lib/Utils";
 import { AzurLaneNews } from "../structures/AzurLaneNews";
 import { ShinanoAutoLewd } from "../structures/Auto";
 
@@ -64,6 +64,9 @@ export class ReadyEvent extends Listener
 		};
 		setPresence();
 		setInterval(setPresence, 30000);
+
+		startCatchers(this.container.client);
+
 
 		const news = new AzurLaneNews();
 		await news.startFetchingTweets();

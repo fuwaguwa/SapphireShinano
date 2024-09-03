@@ -14,10 +14,11 @@ import { ApplyOptions } from "@sapphire/decorators";
 @ApplyOptions<ListenerOptions>({
 	event: "chatInputSubcommandDenied",
 })
-export class VotedSubcommandErrorListener extends Listener<typeof SubcommandPluginEvents.ChatInputSubcommandDenied>
+export class VotedSubcommandError extends Listener<typeof SubcommandPluginEvents.ChatInputSubcommandDenied>
 {
 	public override async run({ context, identifier, message: content, }: UserError, { interaction, }: ChatInputSubcommandDeniedPayload )
 	{
+		console.log("got here 2");
 		if (Reflect.get(Object(context), "silent")) return;
 		if (identifier !== "votedError") return;
 

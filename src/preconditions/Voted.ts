@@ -25,7 +25,7 @@ export class VotedPrecondition extends Precondition
 		}
 		else
 		{
-			return this.error({ message: `expiredVote-${user.lastVoteTimestamp}`, identifier: "votedError", });
+			return this.error({ message: `exp-${user.lastVoteTimestamp}`, identifier: "votedError", });
 		}
 	}
 }

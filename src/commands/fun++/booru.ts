@@ -9,8 +9,7 @@ import { BooruSite } from "../../typings/Booru";
 	description: "Search for content on booru image boards!",
 	cooldownLimit: 1,
 	cooldownDelay: 8000,
-	cooldownFilteredUsers: [...envParseArray("ownerIds")],
-	preconditions: ["Voted"],
+	cooldownFilteredUsers: envParseArray("ownerIds"),
 	nsfw: true,
 	runIn: CommandOptionsRunTypeEnum.GuildAny,
 	subcommands: [
@@ -55,7 +54,6 @@ export class BooruCommand extends Subcommand
 						.setDescription("You know what this is.")
 						.addStringOption(option =>
 							option
-								.setAutocomplete(false)
 								.setName("tags")
 								.setDescription("Post tags, seperate the tags by space, exclude with dash, e.g: shinano_(azur_lane), -hat")
 								.setRequired(true)
