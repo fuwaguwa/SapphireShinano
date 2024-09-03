@@ -54,7 +54,7 @@ export class BooruCommand extends Subcommand
 						.setDescription("You know what this is.")
 						.addStringOption(option =>
 							option
-								.setAutocomplete(false)
+								.setAutocomplete(true)
 								.setName("tags")
 								.setDescription("Post tags, seperate the tags by space, exclude with dash, e.g: shinano_(azur_lane), -hat")
 								.setRequired(true)
