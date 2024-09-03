@@ -3,7 +3,7 @@ import "./lib/Setup";
 import { LogLevel, SapphireClient } from "@sapphire/framework";
 import { Options, Partials } from "discord.js";
 import { config } from "dotenv";
-import { connectToDatabase, startCatchers } from "./lib/Utils";
+import { connectToDatabase } from "./lib/Utils";
 config();
 
 const client = new SapphireClient({
@@ -31,12 +31,8 @@ const main = async () =>
 {
 	try
 	{
-		client.logger.info("Starting error catchers");
-		startCatchers(client);
-
 		connectToDatabase();
-
-		client.logger.info("Logging in");
+		client.logger.info("Logging in...");
 		await client.login(process.env.botToken);
 	}
 	catch (error)

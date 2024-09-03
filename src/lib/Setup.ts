@@ -1,7 +1,5 @@
 import { srcDir } from "./Constants";
 
-process.env.NODE_ENV ??= "development";
-
 import {
 	ApplicationCommandRegistries,
 	RegisterBehavior
@@ -18,9 +16,7 @@ ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
 );
 
 if (process.env.NODE_ENV === "development")
-{
 	ApplicationCommandRegistries.setDefaultGuildIds(["1002188153685295204"]);
-}
 
 setup({ path: join(srcDir, ".env"), });
 
