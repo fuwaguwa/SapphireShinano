@@ -155,7 +155,7 @@ export class DoujinCommand extends Subcommand
 
 		const collector = message.createMessageComponentCollector({
 			componentType: ComponentType.StringSelect,
-			time: 60000,
+			time: 120000,
 		});
 
 		collectors.set(interaction.user.id, collector);
@@ -165,7 +165,7 @@ export class DoujinCommand extends Subcommand
 			interactorOnly: true,
 			pages: doujinResults,
 			menu: resultNavigation,
-			time: 60000,
+			time: 120000,
 		})).startPaginator();
 
 		collector.on("collect", async (i) =>
@@ -181,9 +181,8 @@ export class DoujinCommand extends Subcommand
 			await i.deferUpdate();
 			const menu = resultNavigation.components[0];
 			for (let j = 0; j < menu.options.length; j++)
-			{
 				menu.options[j].setDefault(menu.options[j].data.value === i.values[0]);
-			}
+
 			await this.subcommandCode(interaction, parseInt(i.values[0], 10));
 
 			collector.stop("Processed");
