@@ -34,6 +34,10 @@ import { CommandOptionsRunTypeEnum } from "@sapphire/framework";
 		{
 			name: "vote",
 			chatInputRun: "subcommandVote",
+		},
+		{
+			name: "help",
+			chatInputRun: "subcommandHelp",
 		}
 	],
 })
@@ -74,6 +78,11 @@ export class ShinanoCommand extends Subcommand
 					command
 						.setName("vote")
 						.setDescription("Vote for Shinano, or check your vote status.")
+				)
+				.addSubcommand(command =>
+					command
+						.setName("help")
+						.setDescription("How to look for all Shinano commands!")
 				)
 		);
 	}
@@ -320,5 +329,24 @@ export class ShinanoCommand extends Subcommand
 			embeds: [voteEmbed],
 			components: [links1, links2],
 		});
+	}
+
+
+	/**
+	 * /shinano help
+	 * @param interaction
+	 */
+	public async subcommandHelp(interaction: Subcommand.ChatInputCommandInteraction)
+	{
+		const messageString = "</shinano support:1059059516081192961>";
+		const message =
+			`All of Shinano functions are indexed within the \`Apps & Commands\` button. Please use it to see all available Shinano commands! For more information you can join the support server via ${messageString}\n\n` +
+			"**NSFW commands are only available within NSFW channels! This include commands like /booru, /hanime, /nsfw**\n";
+
+		const responseEmbed = new EmbedBuilder()
+			.setColor("#2b2d31")
+			.setDescription(message)
+			.setImage("https://cdn.discordapp.com/attachments/1022191350835331203/1280481895536267287/Discord_OsMDlfJqTX.png?ex=66d83d32&is=66d6ebb2&hm=9baf7360168e1d2a815b86882fcfa0869e1868513136cef33fd62f99a8abeb31&");
+		await interaction.reply({ embeds: [responseEmbed], });
 	}
 }
