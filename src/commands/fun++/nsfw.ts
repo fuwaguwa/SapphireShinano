@@ -250,7 +250,7 @@ export class NSFWCommand extends Subcommand
 								.setName("type")
 								.setDescription("File type. Ignore this option for random file type.")
 								.setChoices([
-									{ name: "Video", value: "mp4", },
+									{ name: "Video", value: "video", },
 									{ name: "GIF", value: "gif", },
 									{ name: "Random", value: "animation", }
 								])
@@ -327,12 +327,10 @@ export class NSFWCommand extends Subcommand
 	{
 		await this.initial(interaction);
 
-		const fileType: string =
-			interaction.options.getString("type") === "random"
-				? ["video", "gif"][Math.floor(Math.random() * 2)]
-				: interaction.options.getString("type");
-		const category: string =
-			interaction.options.getString("category") || "random";
+		const fileType = interaction.options.getString("type") === "random" || !interaction.options.getString("type")
+			? ["video", "gif"][Math.floor(Math.random() * 2)]
+			: interaction.options.getString("type");
+		const category = interaction.options.getString("category") || "random";
 
 		return getFromAnimation({ interaction, category, format: fileType as PrivateCollectionFileFormat, });
 	}

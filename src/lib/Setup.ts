@@ -15,9 +15,6 @@ ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
 	RegisterBehavior.BulkOverwrite
 );
 
-if (process.env.NODE_ENV === "development")
-	ApplicationCommandRegistries.setDefaultGuildIds(["1002188153685295204"]);
-
 setup({ path: join(srcDir, ".env"), });
 
 colorette.createColors({ useColor: true, });

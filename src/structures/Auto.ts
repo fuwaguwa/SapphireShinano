@@ -11,20 +11,18 @@ import {
 } from "discord.js";
 import { toTitleCase } from "../lib/Utils";
 import { container } from "@sapphire/framework";
+import { envParseArray } from "@skyra/env-utilities";
 
 export class ShinanoAutoLewd
 {
 	public async startLewdPosting()
 	{
-		setInterval(async () =>
+		if (!process.env.guildId)
 		{
-			if (!process.env.guildId)
-			{
-				await this.postLewd();
-			}
-		}, 300000);
-
-		container.logger.info("Started lewd posting...");
+			container.logger.info("Started lewd posting...");
+			await this.postLewd();
+			setInterval(this.postLewd, 300000);
+		}
 	}
 
 	/**
@@ -91,10 +89,7 @@ export class ShinanoAutoLewd
 
 				const userId = doc.identifier.split("|")[1];
 				const user = await User.findOne({ userId: userId, });
-				if (
-					userId !== "836215956346634270" &&
-					Math.floor(Date.now() / 1000) - user.lastVoteTimestamp > 43200
-				)
+				if (!envParseArray("coolPeopleIds").includes(userId) && Math.floor(Date.now() / 1000) - user.lastVoteTimestamp > 43200)
 				{
 					if (!doc.paused)
 					{

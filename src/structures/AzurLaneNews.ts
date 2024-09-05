@@ -32,14 +32,18 @@ export class AzurLaneNews
 	{
 		if (!process.env.guildId)
 		{
+			container.logger.info("Started fetching tweets...");
+
+			await this.fetchTweets();
+			await this.fetchWeiboPosts();
+
+
 			setInterval(async () =>
 			{
 				await this.fetchTweets();
 				await this.fetchWeiboPosts();
-			}, 390000);
+			}, 300000);
 		}
-
-		container.logger.info("Started fetching tweets...");
 	}
 
 	/**
@@ -135,7 +139,7 @@ export class AzurLaneNews
 	 * Fetch Tweets from EN and JP twitter account
 	 * @private
 	 */
-	private async fetchTweets()
+	public async fetchTweets()
 	{
 		const enFeed = await getRSSFeed("AzurLane_EN");
 		const jpFeed = await getRSSFeed("azurlane_staff");
@@ -177,7 +181,7 @@ export class AzurLaneNews
 
 			if (validTweet)
 			{
-				console.log("new valid tweet");
+				container.logger.info("New valid tweet!");
 				allSavedTweets.tweets.push({
 					id: newestTweetId,
 					url: newestTweetLink,
@@ -206,7 +210,7 @@ export class AzurLaneNews
 	 * Fetch posts from CN account
 	 * @private
 	 */
-	private async fetchWeiboPosts()
+	public async fetchWeiboPosts()
 	{
 		fetch("https://al-tweet-scraper.onrender.com/alweibotweet")
 			.then(res => res.json())
@@ -219,58 +223,13 @@ export class AzurLaneNews
 					const tweetsInfo = JSON.parse(data);
 
 					const response = json.data;
-					response.sort((a, b) => b.id - a.id);
+					response.sort((a, b) => parseInt(b.id, 10) - parseInt(a.id, 10));
 					const tweet = response[0];
 
 					const result = tweetsInfo.tweets.find(tweetI => tweetI.id == tweet.id);
-
 					if (!result)
 					{
-						const main = async (url: string) =>
-						{
-							const browser = await puppeteer.launch({
-								headless: "new",
-								args: ["--no-sandbox"],
-							});
-
-							const page = await browser.newPage();
-							await page.goto(url);
-							await page.waitForSelector(".weibo-text", { timeout: 300000, });
-
-							const pageData = await page.evaluate(() =>
-							{
-								// eslint-disable-next-line no-undef
-								const div = document.querySelector(".weibo-text");
-								const textNodes = div.childNodes;
-
-								let text = "";
-								for (let i = 0; i < textNodes.length; i++)
-								{
-									const node = textNodes[i];
-
-									if (node.nodeName === "#text")
-									{
-										text += node.textContent;
-									}
-									else if (node.nodeName === "A")
-									{
-										text += node.textContent;
-									}
-									else if (node.nodeName === "BR")
-									{
-										text += "\n";
-									}
-								}
-
-								return text;
-							});
-
-							await browser.close();
-
-							return pageData;
-						};
-
-						const text = await main(tweet.url);
+						const text = await this.scrapeWeiboPost(tweet.url);
 						let img = null;
 
 						if (tweet.pictures && tweet.pictures.length >= 1)
@@ -333,6 +292,55 @@ export class AzurLaneNews
 				this.retries = 0;
 				console.error(err);
 			});
+	}
+
+	/**
+	 * Scrape post content from weibo
+	 * @param url
+	 * @private
+	 */
+	private async scrapeWeiboPost(url: string)
+	{
+		const browser = await puppeteer.launch({
+			headless: "new",
+			args: ["--no-sandbox"],
+		});
+
+		const page = await browser.newPage();
+		await page.goto(url);
+		await page.waitForSelector(".weibo-text", { timeout: 300000, });
+
+		const pageData = await page.evaluate(() =>
+		{
+			// eslint-disable-next-line no-undef
+			const div = document.querySelector(".weibo-text");
+			const textNodes = div.childNodes;
+
+			let text = "";
+			for (let i = 0; i < textNodes.length; i++)
+			{
+				const node = textNodes[i];
+
+				if (node.nodeName === "#text")
+				{
+					text += node.textContent;
+				}
+				else if (node.nodeName === "A")
+				{
+					text += node.textContent;
+				}
+				else if (node.nodeName === "BR")
+				{
+					text += "\n";
+				}
+			}
+
+			return text;
+		});
+
+		await browser.close();
+
+		return pageData;
 	}
 
 	/**

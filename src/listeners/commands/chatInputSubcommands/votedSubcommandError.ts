@@ -18,7 +18,6 @@ export class VotedSubcommandError extends Listener<typeof SubcommandPluginEvents
 {
 	public override async run({ context, identifier, message: content, }: UserError, { interaction, }: ChatInputSubcommandDeniedPayload )
 	{
-		console.log("got here 2");
 		if (Reflect.get(Object(context), "silent")) return;
 		if (identifier !== "votedError") return;
 
