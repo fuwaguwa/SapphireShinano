@@ -157,8 +157,13 @@ export class TriviaCommand extends Command
 			{
 				for (let i = 0; i < answersRow.components.length; i++)
 				{
-					answersRow.components[i].data["custom_id"].split("-")[0] ===
-					trivia.correctAnswer
+					const processedAnswers = answersRow.components[i].data["custom_id"].split("-");
+					let correctAnswer = processedAnswers[0];
+
+					// For case when the answers have dashes inside it
+					if (processedAnswers.length > 2) correctAnswer = processedAnswers.slice(0, processedAnswers.length - 1).join("-");
+
+					correctAnswer === trivia.correctAnswer
 						? answersRow.components[i]
 							.setStyle(ButtonStyle.Success)
 							.setDisabled(true)
@@ -224,8 +229,7 @@ export class TriviaCommand extends Command
 			{
 				for (let i = 0; i < 4; i++)
 				{
-					const btnId: string =
-						answersRow.components[i].data["custom_id"].split("-")[0];
+					const btnId = answersRow.components[i].data["custom_id"].split("-")[0];
 
 					btnId === trivia.correctAnswer
 						? answersRow.components[i].setStyle(ButtonStyle.Success)
