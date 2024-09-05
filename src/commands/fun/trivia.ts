@@ -217,7 +217,33 @@ export class TriviaCommand extends Command
 			}
 		});
 
-		
+		collector.on("end", async (collected, reason) =>
+		{
+			// Timed Out
+			if (reason && reason !== "End")
+			{
+				for (let i = 0; i < 4; i++)
+				{
+					const btnId: string =
+						answersRow.components[i].data["custom_id"].split("-")[0];
+
+					btnId === trivia.correctAnswer
+						? answersRow.components[i].setStyle(ButtonStyle.Success)
+						: answersRow.components[i].setStyle(ButtonStyle.Secondary);
+
+					answersRow.components[i].setDisabled(true);
+				}
+
+				question.setColor("Red");
+				question.setFooter({ text: "Timed out!", });
+
+				await interaction.editReply({
+					embeds: [question],
+					components: [answersRow],
+					content: `Timed out! The answer was \`${trivia.correctAnswer}\`.`,
+				});
+			}
+		});
 	}
 
 	public async getQuestion(category: string, difficulty: string)
