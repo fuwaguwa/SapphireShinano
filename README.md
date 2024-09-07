@@ -10,8 +10,8 @@ Azur Lane and Genshin Impact Hybrid Discord Bot. Has tons of image manipulation/
 </p>
 
 ### Credits
-Arts: [侑了个侑](https://weibo.com/soaryuna), [SG](https://www.pixiv.net/en/users/34452206), [Nagi Ria](https://twitter.com/nagi_lria) <br>
-Special Thanks: [LB](https://github.com/kaisei-kto), [Ryumin](https://gitlab.com/RiskyRomero) <br>
+Arts: [侑了个侑](https://weibo.com/soaryuna), [SG](https://www.pixiv.net/en/users/34452206), [Nagi Ria](https://twitter.com/nagi_lria), [SSr](https://www.pixiv.net/en/users/45671228) <br>
+Special Thanks: [LB](https://github.com/kaisei-kto), [Ryumin](https://gitlab.com/RiskyRomero), [AzurAPI](https://github.com/AzurAPI/azurapi-js) <br>
 
 ![image](https://user-images.githubusercontent.com/60561817/212728279-44516f7f-391d-47da-a11d-01d03bbad12b.png)
 © 2017 Manjuu Co., Ltd. & Yongshi Co. Ltd. © 2017 Yostar, Inc.
