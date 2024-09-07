@@ -112,29 +112,14 @@ export class ShinanoCommand extends Subcommand
 	 */
 	public async subcommandInfo(interaction: Subcommand.ChatInputCommandInteraction)
 	{
-		const APIs = [
-			"[AzurAPI](https://github.com/AzurAPI/azurapi-js)",
-			"[RapidAPI](https://rapidapi.com/)",
-			"[SauceNAO](https://saucenao.com/)",
-			"[Some Random API](https://some-random-api.ml/)",
-			"[waifu.pics](https://waifu.pics)",
-			"[nekos.fun](https://nekos.fun)",
-			"[nekos.life](https://nekos.life)",
-			"[nekos.best](https://nekos.best)",
-			"[nekobot](https://nekobot.xyz/api)",
-			"[jikan.moe](https://jikan.moe)",
-			"[genshin-db](https://github.com/theBowja/genshin-db)"
-		];
 
 		const shinanoEmbed: EmbedBuilder = new EmbedBuilder()
 			.setColor("#2b2d31")
 			.setTitle("Shinano")
 			.setDescription(
-				"The Multi-Purpose Azur Lane/Genshin Bot!\n\n" +
+				"The Multi-Purpose Azur Lane Bot!\n" +
 				"Developer: [**Fuwafuwa**](https://github.com/fuwaguwa)\n" +
-				"Art by [**SG**](https://www.pixiv.net/en/users/34452206) and [**Nagi Ria**](https://twitter.com/nagi_lria)\n" +
-				"Special Thanks: [**LaziestBoy**](https://github.com/kaisei-kto)\n\n" +
-				`**APIs**: ${APIs.join(", ")}\n\n` +
+				"Credits: On GitHub\n" +
 				"Liking the bot so far? Please **vote** and leave Shinano a **rating** on **top.gg**!"
 			);
 
@@ -155,7 +140,7 @@ export class ShinanoCommand extends Subcommand
 			  new ButtonBuilder()
 			    .setStyle(ButtonStyle.Link)
 			    .setEmoji({ id: "1065583023086641203", })
-			    .setLabel("Contribute")
+			    .setLabel("GitHub")
 			    .setURL("https://github.com/fuwaguwa/Shinano")
 			);
 		const linkButtons: ActionRowBuilder<ButtonBuilder> =
