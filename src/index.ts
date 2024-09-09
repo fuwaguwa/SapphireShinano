@@ -2,9 +2,7 @@ import "./lib/Setup";
 
 import { LogLevel, SapphireClient } from "@sapphire/framework";
 import { Options, Partials } from "discord.js";
-import { config } from "dotenv";
 import { connectToDatabase } from "./lib/Utils";
-config();
 
 const client = new SapphireClient({
 	logger: {

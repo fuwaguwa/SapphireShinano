@@ -1,4 +1,4 @@
-import { srcDir } from "./Constants";
+import { rootDir, srcDir } from "./Constants";
 
 import {
 	ApplicationCommandRegistries,
@@ -15,6 +15,6 @@ ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
 	RegisterBehavior.BulkOverwrite
 );
 
-setup({ path: join(srcDir, ".env"), });
+setup({ path: join(rootDir, ".env"), });
 
 colorette.createColors({ useColor: true, });
