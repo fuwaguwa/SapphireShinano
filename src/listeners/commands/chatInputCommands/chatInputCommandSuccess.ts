@@ -9,7 +9,16 @@ export class ChatInputCommandSuccessListener extends Listener
 	{
 		logSuccessfulCommand(payload);
 
-		const user = await User.findOne({ userId: payload.interaction.user.id, });
+		let user = await User.findOne({ userId: payload.interaction.user.id, });
+
+		if (!user)
+		{
+			user = await User.create({
+				userId: payload.interaction.user.id,
+				commandsExecuted: 0,
+			});
+		}
+
 		await user.updateOne({ commandsExecuted: user.commandsExecuted + 1, });
 	}
 
