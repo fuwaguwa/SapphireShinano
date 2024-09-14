@@ -9,6 +9,7 @@ import { collectors } from "../../lib/Constants";
 import { ShinanoPaginator } from "../../structures/Paginator";
 
 @ApplyOptions<SubcommandOptions>({
+	enabled: false,
 	description: "Search up an doujin on the most popular doujin site.",
 	nsfw: true,
 	cooldownLimit: 1,
@@ -26,9 +27,9 @@ import { ShinanoPaginator } from "../../structures/Paginator";
 		}
 	],
 })
-export class DoujinCommand extends Subcommand
+export class DoujinCommand extends Subcommand 
 {
-	public override registerApplicationCommands(registry: Subcommand.Registry)
+	public override registerApplicationCommands(registry: Subcommand.Registry) 
 	{
 		registry.registerChatInputCommand(builder =>
 			builder
@@ -76,7 +77,7 @@ export class DoujinCommand extends Subcommand
 	 * @param interaction
 	 * @param launchCode
 	 */
-	public async subcommandCode(interaction: Subcommand.ChatInputCommandInteraction, launchCode?: number)
+	public async subcommandCode(interaction: Subcommand.ChatInputCommandInteraction, launchCode?: number) 
 	{
 		if (!interaction.deferred) await interaction.deferReply();
 
@@ -84,7 +85,7 @@ export class DoujinCommand extends Subcommand
 		const response = await fetch(`https://nhentai.net/api/gallery/${code}`);
 		const doujinRep = await response.json();
 
-		if (doujinRep.error)
+		if (doujinRep.error) 
 		{
 			const errorEmbed = new EmbedBuilder()
 				.setColor("Red")
@@ -102,7 +103,7 @@ export class DoujinCommand extends Subcommand
 	 * /doujinshi search
 	 * @param interaction
 	 */
-	public async subcommandSearch(interaction: Subcommand.ChatInputCommandInteraction)
+	public async subcommandSearch(interaction: Subcommand.ChatInputCommandInteraction) 
 	{
 		if (!interaction.deferred) await interaction.deferReply();
 
@@ -113,7 +114,7 @@ export class DoujinCommand extends Subcommand
 		const response = await fetch(`https://nhentai.net/api/galleries/search?query=${name} ${blacklist}&sort=${sorting}`);
 		const body = await response.json();
 
-		if (body.error || body.result.length == 0)
+		if (body.error || body.result.length == 0) 
 		{
 			const noResultEmbed = new EmbedBuilder()
 				.setColor("Red")
@@ -132,7 +133,7 @@ export class DoujinCommand extends Subcommand
 					.setPlaceholder(`Doujin Search Results (${resultCount})`)
 			);
 
-		for (let i = 0; i < resultCount; i++)
+		for (let i = 0; i < resultCount; i++) 
 		{
 			const raw = body.result[i];
 			const doujin = new Doujin(raw);
@@ -168,9 +169,9 @@ export class DoujinCommand extends Subcommand
 			time: 120000,
 		})).startPaginator();
 
-		collector.on("collect", async (i) =>
+		collector.on("collect", async (i) => 
 		{
-			if (!i.customId.endsWith(i.user.id))
+			if (!i.customId.endsWith(i.user.id)) 
 			{
 				return i.reply({
 					content: "This menu does not belong to you",
@@ -188,10 +189,10 @@ export class DoujinCommand extends Subcommand
 			collector.stop("Processed");
 		});
 
-		collector.on("end", async (collected, reason) =>
+		collector.on("end", async (collected, reason) => 
 		{
 			// timeout
-			if (reason !== "Processed")
+			if (reason !== "Processed") 
 			{
 				resultNavigation.components[0].setDisabled(true);
 				await interaction.editReply({ components: [resultNavigation], });
