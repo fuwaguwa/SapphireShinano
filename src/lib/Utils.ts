@@ -30,29 +30,36 @@ import { TableOptions } from "../typings/Utils";
 import { Canvas } from "canvas";
 import RssParser from "rss-parser";
 
-const parser = new RssParser();
+const parser = new RssParser({
+	headers:
+		{
+			"Cache-Control": "no-cache",  // Prevent caching
+			"Pragma": "no-cache",         // HTTP/1.0 caches
+			"Expires": "0",               // Immediately expired
+		},
+});
 
-function getGuildInfo(guild: Guild | null): string
+function getGuildInfo(guild: Guild | null): string 
 {
 	return guild == null ? "| Direct Message" : `${guild.name} - ${cyan(guild.id)} `;
 }
 
-function getAuthorInfo(author: User): string
+function getAuthorInfo(author: User): string 
 {
 	return `${author.username} - ${cyan(author.id)}`;
 }
 
-function getCommandInfo(command: Command): string
+function getCommandInfo(command: Command): string 
 {
 	return cyan(command.name);
 }
 
-function getShardInfo(shardId: number)
+function getShardInfo(shardId: number) 
 {
 	return `${cyan(shardId.toString())}`;
 }
 
-export function getSuccessfulLoggerData(guild: Guild | null, user: User, command: Command)
+export function getSuccessfulLoggerData(guild: Guild | null, user: User, command: Command) 
 {
 	const shard = getShardInfo(guild?.shardId ?? 0);
 	const commandName = getCommandInfo(command);
@@ -62,15 +69,15 @@ export function getSuccessfulLoggerData(guild: Guild | null, user: User, command
 	return { shard, commandName, author, originGuild, };
 }
 
-export function logSuccessfulCommand(payload: ContextMenuCommandSuccessPayload | ChatInputCommandSuccessPayload | MessageCommandSuccessPayload | ChatInputSubcommandSuccessPayload, subcommand?: ChatInputCommandSubcommandMappingMethod): void
+export function logSuccessfulCommand(payload: ContextMenuCommandSuccessPayload | ChatInputCommandSuccessPayload | MessageCommandSuccessPayload | ChatInputSubcommandSuccessPayload, subcommand?: ChatInputCommandSubcommandMappingMethod): void 
 {
 	let successData: ReturnType<typeof getSuccessfulLoggerData>;
 
-	if ("interaction" in payload)
+	if ("interaction" in payload) 
 	{
 		successData = getSuccessfulLoggerData(payload.interaction.guild, payload.interaction.user, payload.command);
 	}
-	else
+	else 
 	{
 		successData = getSuccessfulLoggerData(payload.message.guild, payload.message.author, payload.command);
 	}
@@ -84,7 +91,7 @@ export function logSuccessfulCommand(payload: ContextMenuCommandSuccessPayload |
 /**
  * Update server count on bot listings
  */
-export async function updateServerCount()
+export async function updateServerCount() 
 {
 	if (container.client.user.id !== "1002193298229829682") return "Not Main Bot";
 	// On Discord Services
@@ -122,15 +129,15 @@ export async function updateServerCount()
 /**
  * Restart process with pm2
  */
-export function restartBot()
+export function restartBot() 
 {
-	pm2.connect((err) =>
+	pm2.connect((err) => 
 	{
 		if (err) return console.error(err);
 
-		pm2.restart("SapphireShinano", (err, apps) =>
+		pm2.restart("SapphireShinano", (err, apps) => 
 		{
-			if (err)
+			if (err) 
 			{
 				console.error(err);
 				return pm2.disconnect();
@@ -140,9 +147,9 @@ export function restartBot()
 	});
 }
 
-export function connectToDatabase()
+export function connectToDatabase() 
 {
-	mongoose.connect(process.env.mongoDB).catch((err) =>
+	mongoose.connect(process.env.mongoDB).catch((err) => 
 	{
 		console.log(err);
 	});
@@ -151,11 +158,11 @@ export function connectToDatabase()
 /**
  * Starts error catching
  */
-export function startCatchers(client: SapphireClient)
+export function startCatchers(client: SapphireClient) 
 {
 	let connectingAttempt: number = 0;
 	let connectedToDatabase: boolean = false;
-	process.on("unhandledRejection", async (err: any) =>
+	process.on("unhandledRejection", async (err: any) => 
 	{
 		/**
 		 * Unknown interaction and unknown message error
@@ -172,54 +179,54 @@ export function startCatchers(client: SapphireClient)
 		console.error("Unhandled Promise Rejection:\n" + err);
 	});
 
-	process.on("uncaughtException", async (err) =>
+	process.on("uncaughtException", async (err) => 
 	{
-		console.error	("Uncaught Promise Exception:\n" + err);
+		console.error("Uncaught Promise Exception:\n" + err);
 	});
 
-	process.on("uncaughtExceptionMonitor", async (err) =>
+	process.on("uncaughtExceptionMonitor", async (err) => 
 	{
 		console.error("Uncaught Promise Exception (Monitor):\n" + err);
 	});
 
-	mongoose.connection.on("connecting", () =>
+	mongoose.connection.on("connecting", () => 
 	{
 		client.logger.info("Connecting to the database...");
 	});
 
-	mongoose.connection.on("connecting", () =>
+	mongoose.connection.on("connecting", () => 
 	{
 		connectingAttempt++;
 		client.logger.info(`Connecting Attempt #${connectingAttempt}`);
 	});
 
-	mongoose.connection.on("connected", () =>
+	mongoose.connection.on("connected", () => 
 	{
 		connectedToDatabase = true;
 		client.logger.info("Connected to the database!");
 	});
 
-	mongoose.connection.on("disconnected", () =>
+	mongoose.connection.on("disconnected", () => 
 	{
 		client.logger.error("Lost database connection...");
 
-		if (connectedToDatabase)
+		if (connectedToDatabase) 
 		{
 			restartBot();
 		}
-		else
+		else 
 		{
 			client.logger.info("Attempting to reconnect to the database...");
 			connectToDatabase();
 		}
 	});
 
-	mongoose.connection.on("reconnected", () =>
+	mongoose.connection.on("reconnected", () => 
 	{
 		this.logger.info("Reconnected to the database!");
 	});
 
-	mongoose.connection.on("error", (err) =>
+	mongoose.connection.on("error", (err) => 
 	{
 		this.logger.error(err);
 	});
@@ -230,7 +237,7 @@ export function startCatchers(client: SapphireClient)
  * @param url image/GIF url
  * @returns boolean
  */
-export function isImageAndGif(url: string)
+export function isImageAndGif(url: string) 
 {
 	return url.match(/^http[^\?]*.(jpg|jpeg|png|gif)(\?(.*))?$/gim) != null;
 }
@@ -240,16 +247,16 @@ export function isImageAndGif(url: string)
  * @param id
  * @param interaction
  */
-export async function buttonCooldownCheck(id: string, interaction: ButtonInteraction): Promise<boolean>
+export async function buttonCooldownCheck(id: string, interaction: ButtonInteraction): Promise<boolean> 
 {
 	if (buttonCooldown.has(`${id}${ownerId}`)) buttonCooldown.delete(`${id}${ownerId}`);
 
-	if (buttonCooldown.has(`${id}${interaction.user.id}`))
+	if (buttonCooldown.has(`${id}${interaction.user.id}`)) 
 	{
 		const cms = buttonCooldown.get(`${id}${interaction.user.id}`);
 		const onChillOut = new EmbedBuilder()
 			.setTitle("You're on cooldown!")
-			.setDescription(`You will be able to use the button again <t:${cms/1000}:R>`)
+			.setDescription(`You will be able to use the button again <t:${cms / 1000}:R>`)
 			.setColor("Red");
 		await interaction.reply({ embeds: [onChillOut], ephemeral: true, });
 		return true;
@@ -262,10 +269,10 @@ export async function buttonCooldownCheck(id: string, interaction: ButtonInterac
  * @param id
  * @param interaction
  */
-export function buttonCooldownSet(id: string, interaction: ButtonInteraction)
+export function buttonCooldownSet(id: string, interaction: ButtonInteraction) 
 {
 	buttonCooldown.set(`${id}${interaction.user.id}`, Date.now() + 5000);
-	setTimeout(() =>
+	setTimeout(() => 
 	{
 		buttonCooldown.delete(`${id}${interaction.user.id}`);
 	}, 5000);
@@ -275,16 +282,16 @@ export function buttonCooldownSet(id: string, interaction: ButtonInteraction)
  * Refresh the user collectors collection
  * @param interaction
  */
-export function collectorsRefresh(interaction: ChatInputCommandInteraction | Interaction)
+export function collectorsRefresh(interaction: ChatInputCommandInteraction | Interaction) 
 {
-	if (collectors.has(interaction.user.id))
+	if (collectors.has(interaction.user.id)) 
 	{
 		const collector = collectors.get(interaction.user.id);
 		if (!collector.ended) collector.stop();
 		collectors.delete(interaction.user.id);
 	}
 
-	if (pageCollectors.has(interaction.user.id))
+	if (pageCollectors.has(interaction.user.id)) 
 	{
 		const pageCollector = pageCollectors.get(interaction.user.id);
 		if (!pageCollector.ended) pageCollector.stop();
@@ -297,23 +304,23 @@ export function collectorsRefresh(interaction: ChatInputCommandInteraction | Int
  * @param str string to turn into title case
  * @returns title cased str
  */
-export function toTitleCase(str: string)
+export function toTitleCase(str: string) 
 {
 	return str
 		.toLowerCase()
 		.split(" ")
-		.map((word) =>
+		.map((word) => 
 		{
 			return word.charAt(0).toUpperCase() + word.slice(1);
 		})
 		.join(" ");
 }
 
-export async function createTable({ columns, dataSrc, columnSize, firstColumnSize, }: TableOptions)
+export async function createTable({ columns, dataSrc, columnSize, firstColumnSize, }: TableOptions) 
 {
 	// Structure
 	const tableColumns: any[] = [];
-	for (let i = 0; i < columns.length; i++)
+	for (let i = 0; i < columns.length; i++) 
 	{
 		let column = {
 			title: columns[i],
@@ -325,11 +332,11 @@ export async function createTable({ columns, dataSrc, columnSize, firstColumnSiz
 			textFontSize: "29px",
 		};
 
-		if (i == 1 && firstColumnSize)
+		if (i == 1 && firstColumnSize) 
 		{
 			column = Object.assign({ width: firstColumnSize, }, column);
 		}
-		else if (columnSize)
+		else if (columnSize) 
 		{
 			column = Object.assign({ width: columnSize, }, column);
 		}
@@ -357,26 +364,27 @@ export async function createTable({ columns, dataSrc, columnSize, firstColumnSiz
 }
 
 let rssRetries: number = 0;
+
 /**
  * Parse an RSS feed for a twitter user
  * @param user twitter username
  */
-export async function getRSSFeed(user: string)
+export async function getRSSFeed(user: string) 
 {
-	try
+	try 
 	{
-		const feed = await parser.parseURL(`https://twiiit.com/${user}/rss`);
+		const feed = await parser.parseURL(`https://twiiit.com/${user}/rss?cacheBuster=${new Date().getTime()}`);
 		rssRetries = 0;
 		return feed;
 	}
-	catch (error)
+	catch (error) 
 	{
 		rssRetries++;
-		if (rssRetries < 5)
+		if (rssRetries < 5) 
 		{
 			return getRSSFeed(user);
 		}
-		else
+		else 
 		{
 			rssRetries = 0;
 			console.error(error);
@@ -389,7 +397,7 @@ export async function getRSSFeed(user: string)
  * @param str string
  * @returns string
  */
-export function formatString(str)
+export function formatString(str) 
 {
 	str.toString();
 	return str.replace(/(<([^>]+)>)/gi, "");

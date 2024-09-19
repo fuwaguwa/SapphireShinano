@@ -20,7 +20,7 @@ import Stealth from "puppeteer-extra-plugin-stealth";
 
 puppeteer.use(Stealth());
 
-export class AzurLaneNews
+export class AzurLaneNews 
 {
 	retries = 0;
 	EHOSTRetries = 0;
@@ -28,9 +28,9 @@ export class AzurLaneNews
 	/**
 	 * Start fetching new tweets
 	 */
-	public async startFetchingTweets()
+	public async startFetchingTweets() 
 	{
-		if (!process.env.guildId)
+		if (!process.env.guildId) 
 		{
 			container.logger.info("Started fetching tweets...");
 
@@ -38,7 +38,7 @@ export class AzurLaneNews
 			await this.fetchWeiboPosts();
 
 
-			setInterval(async () =>
+			setInterval(async () => 
 			{
 				await this.fetchTweets();
 				await this.fetchWeiboPosts();
@@ -51,11 +51,11 @@ export class AzurLaneNews
 	 * @param tweet
 	 * @private
 	 */
-	private async postTweet(tweet)
+	private async postTweet(tweet) 
 	{
 		let messageOptions: MessageCreateOptions;
 
-		if (tweet.url.includes("azurlane_staff"))
+		if (tweet.url.includes("azurlane_staff")) 
 		{
 			const translate = new ActionRowBuilder<ButtonBuilder>().setComponents(
 				new ButtonBuilder()
@@ -70,7 +70,7 @@ export class AzurLaneNews
 				components: [translate],
 			};
 		}
-		else if (tweet.url.includes("weibo.cn"))
+		else if (tweet.url.includes("weibo.cn")) 
 		{
 			const translate = new ActionRowBuilder<ButtonBuilder>().setComponents(
 				new ButtonBuilder()
@@ -99,7 +99,7 @@ export class AzurLaneNews
 				components: [translate],
 			};
 		}
-		else
+		else 
 		{
 			messageOptions = {
 				content:
@@ -107,16 +107,16 @@ export class AzurLaneNews
 			};
 		}
 
-		for await (const doc of News.find())
+		for await (const doc of News.find()) 
 		{
-			try
+			try 
 			{
 				const guild = await container.client.guilds.fetch(doc.guildId);
 				const channel = await guild.channels.fetch(doc.channelId);
 
 				await (channel as TextChannel).send(messageOptions);
 			}
-			catch (error)
+			catch (error) 
 			{
 				/**
 				 * 50001: Missing Access
@@ -139,14 +139,14 @@ export class AzurLaneNews
 	 * Fetch Tweets from EN and JP twitter account
 	 * @private
 	 */
-	public async fetchTweets()
+	public async fetchTweets() 
 	{
 		const enFeed = await getRSSFeed("AzurLane_EN");
 		const jpFeed = await getRSSFeed("azurlane_staff");
 
 		const allFeed = enFeed.items.concat(jpFeed.items);
 
-		allFeed.sort((x, y) =>
+		allFeed.sort((x, y) => 
 		{
 			const xId = x.link.substring(0, x.link.length - 2).split("/status/")[1];
 			const yId = y.link.substring(0, y.link.length - 2).split("/status/")[1];
@@ -164,9 +164,10 @@ export class AzurLaneNews
 		const newestTweetLink =
 			"https://vxtwitter.com/" + newestTweetLinkUn.join("/");
 		const newestTweetId = parseInt(newestTweetLink.split("/status/")[1]);
+		container.logger.debug(`Current Newest Tweet: ${newestTweetLink}`);
 
 		const tweetJsonDir = path.join(rootDir, "data", "tweetsInfo.json");
-		fs.readFile(tweetJsonDir, "utf-8", async (err, data) =>
+		fs.readFile(tweetJsonDir, "utf-8", async (err, data) => 
 		{
 			const allSavedTweets = JSON.parse(data);
 
@@ -179,7 +180,7 @@ export class AzurLaneNews
 				!newestTweet.title.includes("RT by") &&
 				!newestTweet.title.includes("R to");
 
-			if (validTweet)
+			if (validTweet) 
 			{
 				container.logger.info("New valid tweet!");
 				allSavedTweets.tweets.push({
@@ -195,7 +196,7 @@ export class AzurLaneNews
 					tweetJsonDir,
 					JSON.stringify(allSavedTweets, null, "\t"),
 					"utf-8",
-					(err) =>
+					(err) => 
 					{
 						if (err) console.log(err);
 					}
@@ -210,15 +211,15 @@ export class AzurLaneNews
 	 * Fetch posts from CN account
 	 * @private
 	 */
-	public async fetchWeiboPosts()
+	public async fetchWeiboPosts() 
 	{
 		fetch("https://al-tweet-scraper.onrender.com/alweibotweet")
 			.then(res => res.json())
-			.then((json) =>
+			.then((json) => 
 			{
 				const tweetJsonDir = path.join(rootDir, "data", "weiboTweetsInfo.json");
 
-				fs.readFile(tweetJsonDir, "utf-8", async (err, data) =>
+				fs.readFile(tweetJsonDir, "utf-8", async (err, data) => 
 				{
 					const tweetsInfo = JSON.parse(data);
 
@@ -227,12 +228,12 @@ export class AzurLaneNews
 					const tweet = response[0];
 
 					const result = tweetsInfo.tweets.find(tweetI => tweetI.id == tweet.id);
-					if (!result)
+					if (!result) 
 					{
 						const text = await this.scrapeWeiboPost(tweet.url);
 						let img = null;
 
-						if (tweet.pictures && tweet.pictures.length >= 1)
+						if (tweet.pictures && tweet.pictures.length >= 1) 
 						{
 							const imageResponse = await axios.get(tweet.pictures[0], {
 								responseType: "arraybuffer",
@@ -271,7 +272,7 @@ export class AzurLaneNews
 							tweetJsonDir,
 							JSON.stringify(tweetsInfo, null, "\t"),
 							"utf-8",
-							(err) =>
+							(err) => 
 							{
 								if (err) console.error(err);
 							}
@@ -281,9 +282,9 @@ export class AzurLaneNews
 					}
 				});
 			})
-			.catch((err) =>
+			.catch((err) => 
 			{
-				if (this.retries < 3)
+				if (this.retries < 3) 
 				{
 					this.retries++;
 					return this.fetchWeiboPosts();
@@ -299,7 +300,7 @@ export class AzurLaneNews
 	 * @param url
 	 * @private
 	 */
-	private async scrapeWeiboPost(url: string)
+	private async scrapeWeiboPost(url: string) 
 	{
 		const browser = await puppeteer.launch({
 			headless: "new",
@@ -310,26 +311,26 @@ export class AzurLaneNews
 		await page.goto(url);
 		await page.waitForSelector(".weibo-text", { timeout: 300000, });
 
-		const pageData = await page.evaluate(() =>
+		const pageData = await page.evaluate(() => 
 		{
 			// eslint-disable-next-line no-undef
 			const div = document.querySelector(".weibo-text");
 			const textNodes = div.childNodes;
 
 			let text = "";
-			for (let i = 0; i < textNodes.length; i++)
+			for (let i = 0; i < textNodes.length; i++) 
 			{
 				const node = textNodes[i];
 
-				if (node.nodeName === "#text")
+				if (node.nodeName === "#text") 
 				{
 					text += node.textContent;
 				}
-				else if (node.nodeName === "A")
+				else if (node.nodeName === "A") 
 				{
 					text += node.textContent;
 				}
-				else if (node.nodeName === "BR")
+				else if (node.nodeName === "BR") 
 				{
 					text += "\n";
 				}
@@ -349,9 +350,9 @@ export class AzurLaneNews
 	 * @param language
 	 * @private
 	 */
-	private async translateTweet(content: string, language: string)
+	private async translateTweet(content: string, language: string) 
 	{
-		try
+		try 
 		{
 			const translations = await translate(content, {
 				from: language,
@@ -362,11 +363,11 @@ export class AzurLaneNews
 
 			return translations.text;
 		}
-		catch (err)
+		catch (err) 
 		{
 			console.error(err);
 
-			if (err.message.includes("EHOSTUNREACH") && this.EHOSTRetries < 3)
+			if (err.message.includes("EHOSTUNREACH") && this.EHOSTRetries < 3) 
 			{
 				this.EHOSTRetries += 1;
 				return this.translateTweet(content, language);
