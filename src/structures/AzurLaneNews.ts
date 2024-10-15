@@ -44,7 +44,6 @@ export class AzurLaneNews
 				await this.fetchTweets();
 			}, 400000);
 
-
 			try 
 			{
 				await this.fetchWeiboPosts();
@@ -54,8 +53,6 @@ export class AzurLaneNews
 			{
 				container.logger.error(error);
 			}
-
-
 		}
 	}
 
@@ -150,7 +147,6 @@ export class AzurLaneNews
 
 	/**
 	 * Fetch Tweets from EN and JP twitter account
-	 * @private
 	 */
 	public async fetchTweets() 
 	{
@@ -221,7 +217,6 @@ export class AzurLaneNews
 
 	/**
 	 * Fetch posts from CN account
-	 * @private
 	 */
 	public async fetchWeiboPosts() 
 	{
@@ -238,6 +233,8 @@ export class AzurLaneNews
 					const response = json.data;
 					response.sort((a, b) => parseInt(b.id, 10) - parseInt(a.id, 10));
 					const tweet = response[0];
+
+					container.logger.info(`Current Newest CN Tweet: ${tweet.url}`);
 
 					const result = tweetsInfo.tweets.find(tweetI => tweetI.id == tweet.id);
 					if (!result) 
