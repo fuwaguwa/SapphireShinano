@@ -36,13 +36,13 @@ export class AzurLaneNews
 
 			setInterval(async () => 
 			{
-				await this.fetchTweets();
-			}, 400000);
+				await this.fetchWeiboPosts();
+			}, 300000);
 
 			setInterval(async () => 
 			{
-				await this.fetchWeiboPosts();
-			}, 300000);
+				await this.fetchTweets();
+			}, 400000);
 
 			try 
 			{
