@@ -13,15 +13,22 @@ import { toTitleCase } from "../lib/Utils";
 import { container } from "@sapphire/framework";
 import { envParseArray } from "@skyra/env-utilities";
 
-export class ShinanoAutoLewd
+export class ShinanoAutoLewd 
 {
-	public async startLewdPosting()
+	public async startLewdPosting() 
 	{
-		if (!process.env.guildId)
+		if (!process.env.guildId) 
 		{
 			container.logger.info("Started lewd posting...");
-			await this.postLewd();
 			setInterval(this.postLewd, 300000);
+			try 
+			{
+				await this.postLewd();
+			}
+			catch (error) 
+			{
+				container.logger.error(error);
+			}
 		}
 	}
 
@@ -29,13 +36,13 @@ export class ShinanoAutoLewd
 	 * Post lewd to all server
 	 * @private
 	 */
-	private async postLewd()
+	private async postLewd() 
 	{
 		const image = (await Image.aggregate([{ $sample: { size: 1, }, }]))[0];
 
 		let chatOptions: MessageCreateOptions;
 
-		if (!(image.link as string).endsWith("mp4"))
+		if (!(image.link as string).endsWith("mp4")) 
 		{
 			const lewdEmbed = new EmbedBuilder()
 				.setColor("Random")
@@ -62,23 +69,23 @@ export class ShinanoAutoLewd
 				components: [imageInfo],
 			};
 		}
-		else
+		else 
 		{
 			chatOptions = {
 				content: image.link,
 			};
 		}
 
-		for await (let doc of Guild.find())
+		for await (let doc of Guild.find()) 
 		{
-			try
+			try 
 			{
 				const guild = await container.client.guilds.fetch(doc.guildId);
 				const channel = (await guild.channels.fetch(
 					doc.channelId
 				)) as TextChannel;
 
-				if (!channel.nsfw)
+				if (!channel.nsfw) 
 				{
 					const nsfw: EmbedBuilder = new EmbedBuilder()
 						.setColor("Red")
@@ -89,9 +96,9 @@ export class ShinanoAutoLewd
 
 				const userId = doc.identifier.split("|")[1];
 				const user = await User.findOne({ userId: userId, });
-				if (!envParseArray("coolPeopleIds").includes(userId) && Math.floor(Date.now() / 1000) - user.lastVoteTimestamp > 43200)
+				if (!envParseArray("coolPeopleIds").includes(userId) && Math.floor(Date.now() / 1000) - user.lastVoteTimestamp > 43200) 
 				{
-					if (!doc.paused)
+					if (!doc.paused) 
 					{
 						const paused: EmbedBuilder = new EmbedBuilder()
 							.setColor("Red")
@@ -126,7 +133,7 @@ export class ShinanoAutoLewd
 					continue;
 				}
 
-				if (doc.paused)
+				if (doc.paused) 
 				{
 					doc.paused = false;
 					await doc.save();
@@ -134,7 +141,7 @@ export class ShinanoAutoLewd
 
 				await channel.send(chatOptions);
 			}
-			catch (error)
+			catch (error) 
 			{
 				/**
 				 * 50001: Missing Access

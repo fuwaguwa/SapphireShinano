@@ -34,15 +34,27 @@ export class AzurLaneNews
 		{
 			container.logger.info("Started fetching tweets...");
 
-			await this.fetchTweets();
-			await this.fetchWeiboPosts();
-
-
 			setInterval(async () => 
 			{
 				await this.fetchTweets();
+			}, 400000);
+
+			setInterval(async () => 
+			{
 				await this.fetchWeiboPosts();
 			}, 300000);
+
+			try 
+			{
+				await this.fetchTweets();
+				await this.fetchWeiboPosts();
+			}
+			catch (error) 
+			{
+				container.logger.error(error);
+			}
+
+
 		}
 	}
 
@@ -143,7 +155,6 @@ export class AzurLaneNews
 	{
 		const enFeed = await getRSSFeed("AzurLane_EN");
 		const jpFeed = await getRSSFeed("azurlane_staff");
-
 		const allFeed = enFeed.items.concat(jpFeed.items);
 
 		allFeed.sort((x, y) => 
