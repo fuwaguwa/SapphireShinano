@@ -220,7 +220,7 @@ export class AzurLaneNews
 	 */
 	public async fetchWeiboPosts() 
 	{
-		fetch("https://al-tweet-scraper.onrender.com/alweibotweet")
+		fetch("https://al-tweet-scraper.onrender.com/alweibotweet", { cache: "no-cache", })
 			.then(res => res.json())
 			.then((json) => 
 			{
