@@ -42,7 +42,7 @@ export class AzurLaneNews
 			setInterval(async () => 
 			{
 				await this.fetchTweets();
-			}, 400000);
+			}, 600000);
 
 			try 
 			{
