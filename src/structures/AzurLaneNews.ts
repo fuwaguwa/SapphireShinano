@@ -231,7 +231,7 @@ export class AzurLaneNews
 					const tweetsInfo = JSON.parse(data);
 
 					const response = json.data;
-					response.sort((a, b) => parseInt(b.id, 10) - parseInt(a.id, 10));
+					// response.sort((a, b) => parseInt(b.id, 10) - parseInt(a.id, 10));
 					const tweet = response[0];
 
 					container.logger.info(`Current Newest CN Tweet: ${tweet.url}`);
