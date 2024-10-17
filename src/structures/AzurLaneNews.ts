@@ -146,9 +146,57 @@ export class AzurLaneNews
 
 
 	/**
-	 * Fetch Tweets from EN and JP twitter account
+	 * Fetch tweets from EN and JP twitter account (new method)
 	 */
 	public async fetchTweets() 
+	{
+		const response = await fetch("https://al-tweet-scraper.onrender.com/altweet");
+		const tweets = await response.json();
+
+		const newestTweet = tweets.data[0];
+		const tweetsJsonDir = path.join(rootDir, "data", "tweetsInfo.json");
+
+		container.logger.info(`Current Newest Tweet: ${newestTweet.link}`);
+
+		fs.readFile(tweetsJsonDir, "utf-8", async (err, data) => 
+		{
+			const allSavedTweets = JSON.parse(data);
+
+			const newTweetPresence = allSavedTweets.tweets.find(
+				tweet => tweet.id == newestTweet.id
+			);
+
+			if (!newTweetPresence) 
+			{
+				container.logger.info("New valid tweet!");
+				allSavedTweets.tweets.push({
+					id: newestTweet.id,
+					url: newestTweet.link,
+					raw: null,
+					enTranslate: newestTweet.link.includes("azurlane_staff")
+						? await this.translateTweet(formatString(newestTweet.text), "ja")
+						: null,
+				});
+
+				fs.writeFile(
+					tweetsJsonDir,
+					JSON.stringify(allSavedTweets, null, "\t"),
+					"utf-8",
+					(err) => 
+					{
+						if (err) console.log(err);
+					}
+				);
+
+				await this.postTweet(allSavedTweets.tweets[allSavedTweets.tweets.length - 1]);
+			}
+		});
+	}
+
+	/**
+	 * Fetch Tweets from EN and JP twitter account (old method)
+	 */
+	public async legacyFetchTweets() 
 	{
 		const enFeed = await getRSSFeed("AzurLane_EN");
 		const jpFeed = await getRSSFeed("azurlane_staff");
